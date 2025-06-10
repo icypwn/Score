@@ -9,12 +9,10 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Goodbye, worlds!")
+        NavigationStack {
+            NavigationLink("Set a new goal", destination: SetNewGoal())
         }
+        
         .padding()
     }
 }
