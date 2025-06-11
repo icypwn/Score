@@ -1,0 +1,1 @@
+- Keep using the old Navigation Links and add interactivity for NewGoal details

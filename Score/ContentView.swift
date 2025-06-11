@@ -10,11 +10,15 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         NavigationStack {
-            NavigationLink("Set a new goal", destination: SetNewGoal())
+            NavigationLink("Set a new goal") {
+                SetNewGoal()
+            }
+            
         }
         
         .padding()
     }
+    
 }
 
 #Preview {

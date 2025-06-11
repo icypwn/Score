@@ -9,42 +9,48 @@ import SwiftUI
 
 struct SetNewGoal: View {
     
-    enum GoalType {
+    enum GoalType: String, CaseIterable {
         case physical
         case mental
         case career
         case financial
     }
     
-    // State variables
-    @State private var selectedGoal: GoalType? = nil
-    @State private var navigation = false
-    
     var body: some View {
-        
-    NavigationStack {
-        VStack(spacing: 20) {
-            NavigationLink(destination: NewGoalDetails(), isActive: $navigation) {
-                EmptyView()
+        VStack(spacing: 50) {
+            Text("Set a New Goal")
+                .font(.title)
+                .bold()
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: [.blue, .purple],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+            VStack(spacing: 20) {
+                NavigationLink("Physical Goal 💪") {
+                    // Since we're passing in a parameter that expects GoalType, Swift knows we mean GoalType.physical so we don't have to write it 
+                    NewGoalDetails(goalType: .physical)
+                }
+                .bold()
+                
+                NavigationLink("Mental Goal 🧠") {
+                    NewGoalDetails(goalType: .mental)
+                }
+                .bold()
+                
+                NavigationLink("Career Goal 👨‍💼") {
+                    NewGoalDetails(goalType: .career)
+                }
+                .bold()
+                
+                NavigationLink("Financial Goal 💰") {
+                    NewGoalDetails(goalType: .financial)
+                }
             }
-                Button("Physical Goal 💪") {
-                    selectedGoal = .physical
-                    navigation = true
-                }
-                Button("Mental Goal 🧠") {
-                    selectedGoal = .mental
-                    navigation = true
-                }
-                Button("Career Goal 👨‍💼") {
-                    selectedGoal = .career
-                    navigation = true
-                }
-                Button("Financial Goal 💰") {
-                    selectedGoal = .financial
-                    navigation = true
-                }
-            }
-            
+            .bold()
+            .padding(.bottom, 60)
         }
     }
 }
