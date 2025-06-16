@@ -15,7 +15,11 @@ struct NewGoalForm: View {
     let range = 1...100
     @State var minutesPerDay = 30.0       // Changed to Double for Slider
     @State var isEditing = false// Added @State
-    @State var currentDate = Calendar()
+    @State var currentDate = Date()
+    
+    var calculatedDate: Date {
+        Calendar.current.date(byAdding: .weekOfMonth, value: weeks, to: Date())!
+    }
     
     var body: some View {
         Form {
@@ -27,6 +31,7 @@ struct NewGoalForm: View {
                     Slider(
                         value: $minutesPerDay,
                         in: 0...100,
+                        step: 5,
                         onEditingChanged: { editing in
                             isEditing = editing
                         }
@@ -38,11 +43,10 @@ struct NewGoalForm: View {
                     step: step
                 ) { Text("Weeks: \(weeks)") }
                 // TODO Calculate end date from weeks and don't allow user to change this
-                DatePicker(
-                    "End Date",
-                    selection: $date,
-                    displayedComponents: [.date]
-                )
+                VStack(alignment: .leading) {
+                    Text("Completion Date: \(calculatedDate.formatted(date: .abbreviated, time: .omitted))")
+                }
+                
             }
                     
                 

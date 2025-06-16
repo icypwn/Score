@@ -49,6 +49,7 @@ struct SetNewGoal: View {
                     NewGoalDetails(goalType: .financial)
                 }
             }
+            .customBackground("Landing Page #1")
             .bold()
             .padding(.bottom, 60)
         }
