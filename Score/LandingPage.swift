@@ -13,7 +13,6 @@ struct LandingPage1: View {
     @State private var isVisible = true
     
     var body: some View {
-        
         NavigationStack {
             NavigationLink(destination: LandingPage2()) {
                 VStack {
@@ -22,7 +21,7 @@ struct LandingPage1: View {
                     Text("tap anywhere to continue")
                         .flashText(duration: 2.0)
                         .font(.system(size: 15))
-                        
+                    
                 }
                 .customBackground("Landing Page #1")
                 .bold()
@@ -210,35 +209,37 @@ struct LandingPage8: View {
     }
 }
 
-struct LandingPage9: View {
 
-    struct toggleButton: View {
-        // Args
-        @State private var buttonSelected = false
-        var buttonLabel: String
-        
-        var body: some View {
-            Button(action: {
-                buttonSelected.toggle() // What happens when the button is clicked (using closure)
-            }) { // What the button looks like
-                Text(buttonLabel)
-                    .padding()
-                    .background(buttonSelected ? Color.green : Color.gray)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-            }
-        }
-    }
-    
+struct LandingPage9: View {
+    // Shared state that stores the selected label
+    @State private var selectedAgeGroup: String? = nil
+
+    let options = ["14–24", "25–34", "35–44", "45-54", "55+"]
+
     var body: some View {
-            VStack {
-                Text("how old are you?")
-                    .padding(.horizontal, 40.0)
-                toggleButton(buttonLabel: "14-24")
-                toggleButton(buttonLabel: "25-35")
-                toggleButton(buttonLabel: "36-46")
                 
-                // ? How do I make sure multiple state variables aren't selected
+            VStack(spacing: 20) {
+                Text("how old are you?")
+                    .padding(.vertical, 10)
+                
+                ForEach(options, id: \.self) { option in
+                    Button(action: {
+                        selectedAgeGroup = option
+                    }) {
+                        Text(option)
+                            .padding()
+                            .frame(maxWidth: 300.0)
+                            .background(selectedAgeGroup == option ? Color.init(red: 104/255, green: 242/255, blue: 242/255) : Color.gray.opacity(0.3))
+                            .foregroundColor(.white)
+                            .cornerRadius(10)
+                            .font(.system(size: 30))
+                    }
+                }
+                
+                NavigationLink(destination: LandingPage11()) {
+                    Text("continue")
+                }
+                .font(.system(size: 20))
             }
             .customBackground("Landing Page #1")
             .bold()
@@ -250,7 +251,80 @@ struct LandingPage9: View {
     }
 }
 
+struct LandingPage11: View {
+    // Shared state that stores the selected label
+    @State private var selectedGoal: String? = nil
+
+    let options = ["physical 💪", "mental 🧠", "career 👨‍💼", "financial 💰"]
+
+    var body: some View {
+                
+            VStack(spacing: 20) {
+                Text("goal type?")
+                    .padding(.vertical, 10)
+                    .padding(.horizontal, 10.0)
+                    .multilineTextAlignment(.center)
+                
+                ForEach(options, id: \.self) { option in
+                    Button(action: {
+                        selectedGoal = option
+                    }) {
+                        Text(option)
+                            .padding()
+                            .frame(maxWidth: 300.0)
+                            .background(selectedGoal == option ? Color.init(red: 104/255, green: 242/255, blue: 242/255) : Color.gray.opacity(0.3))
+                            .foregroundColor(.white)
+                            .cornerRadius(10)
+                            .font(.system(size: 30))
+                    }
+                }
+                
+                NavigationLink(destination: LandingPage12()) {
+                    Text("continue")
+                }
+                #if os(iOS)
+                    .navigationBarHidden(true)
+                #endif
+                .font(.system(size: 20))
+            }
+            .customBackground("Landing Page #1")
+            .bold()
+            .font(.system(size: 44, weight: .bold, design: .rounded))
+            .foregroundColor(.black)
+    }
+}
+
+struct LandingPage12: View {
+    
+    @State private var GoalDifficulty = 5.0
+    
+    var body: some View {
+        VStack {
+            Text("diffculy level?")
+            // Print (rounded) difficulty level
+            Text("\(round(GoalDifficulty * 10)/10)")
+                .padding(.vertical, 10)
+                .padding(.horizontal, 10.0)
+                .multilineTextAlignment(.center)
+                .bold()
+                .font(.system(size: 44, weight: .bold, design: .rounded))
+                .foregroundColor(.black)
+            Gauge(value: GoalDifficulty, in: 0...10) {
+                Text("difficulty level")
+            }
+            .gaugeStyle(.accessoryCircularCapacity)
+            Slider(value: $GoalDifficulty, in: 0...10, step: 0.5)
+                .frame(width: 300)
+        }
+        .customBackground("Landing Page #1")
+    #if os(iOS)
+        .navigationBarHidden(true)
+    #endif
+    }
+}
+
+
 
 #Preview {
-    LandingPage9()
+    LandingPage1()
 }

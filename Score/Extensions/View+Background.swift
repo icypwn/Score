@@ -16,6 +16,7 @@ struct BackgroundModifier: ViewModifier {
             Image(imageName)
                 .scaledToFill()
                 .ignoresSafeArea(.all)
+                .allowsHitTesting(false)
             
             content
         }
