@@ -24,7 +24,6 @@ struct LandingPage1: View {
                     
                 }
                 .customBackground("Landing Page #1")
-                .bold()
                 .font(.system(size: 44, weight: .bold, design: .rounded))
                 .foregroundColor(.black)
             }
@@ -51,7 +50,6 @@ struct LandingPage2: View {
                     .font(.system(size: 15))
             }
             .customBackground("Landing Page #1")
-            .bold()
             .font(.system(size: 44, weight: .bold, design: .rounded))
             .foregroundColor(.black)
         }
@@ -78,7 +76,6 @@ struct LandingPage3: View {
                     .font(.system(size: 15))
             }
             .customBackground("Landing Page #1")
-            .bold()
             .font(.system(size: 44, weight: .bold, design: .rounded))
             .foregroundColor(.black)
         }
@@ -104,7 +101,6 @@ struct LandingPage4: View {
                     .font(.system(size: 15))
             }
             .customBackground("Landing Page #1")
-            .bold()
             .font(.system(size: 44, weight: .bold, design: .rounded))
             .foregroundColor(.black)
         }
@@ -126,7 +122,6 @@ struct LandingPage5: View {
                     .font(.system(size: 15))
             }
             .customBackground("Landing Page #1")
-            .bold()
             .font(.system(size: 44, weight: .bold, design: .rounded))
             .foregroundColor(.black)
         }
@@ -148,7 +143,6 @@ struct LandingPage6: View {
                     .font(.system(size: 15))
             }
             .customBackground("Landing Page #1")
-            .bold()
             .font(.system(size: 44, weight: .bold, design: .rounded))
             .foregroundColor(.black)
         }
@@ -177,7 +171,6 @@ struct LandingPage7: View {
                     .font(.system(size: 15))
             }
             .customBackground("Landing Page #1")
-            .bold()
             .font(.system(size: 44, weight: .bold, design: .rounded))
             .foregroundColor(.black)
         }
@@ -199,7 +192,6 @@ struct LandingPage8: View {
                     .font(.system(size: 15))
             }
             .customBackground("Landing Page #1")
-            .bold()
             .font(.system(size: 44, weight: .bold, design: .rounded))
             .foregroundColor(.black)
         }
@@ -222,27 +214,14 @@ struct LandingPage9: View {
                 Text("how old are you?")
                     .padding(.vertical, 10)
                 
-                ForEach(options, id: \.self) { option in
-                    Button(action: {
-                        selectedAgeGroup = option
-                    }) {
-                        Text(option)
-                            .padding()
-                            .frame(maxWidth: 300.0)
-                            .background(selectedAgeGroup == option ? Color.init(red: 104/255, green: 242/255, blue: 242/255) : Color.gray.opacity(0.3))
-                            .foregroundColor(.white)
-                            .cornerRadius(10)
-                            .font(.system(size: 30))
-                    }
-                }
+                arrayToButtons(arrayName: options, outputState: $selectedAgeGroup)
                 
                 NavigationLink(destination: LandingPage11()) {
                     Text("continue")
                 }
-                .font(.system(size: 20))
+                .font(.system(size: 20, weight: .bold, design: .rounded))
             }
             .customBackground("Landing Page #1")
-            .bold()
             .font(.system(size: 44, weight: .bold, design: .rounded))
             .foregroundColor(.black)
     #if os(iOS)
@@ -253,7 +232,7 @@ struct LandingPage9: View {
 
 struct LandingPage11: View {
     // Shared state that stores the selected label
-    @State private var selectedGoal: String? = nil
+    @State private var selectedGoalType: String? = nil
 
     let options = ["physical 💪", "mental 🧠", "career 👨‍💼", "financial 💰"]
 
@@ -265,30 +244,17 @@ struct LandingPage11: View {
                     .padding(.horizontal, 10.0)
                     .multilineTextAlignment(.center)
                 
-                ForEach(options, id: \.self) { option in
-                    Button(action: {
-                        selectedGoal = option
-                    }) {
-                        Text(option)
-                            .padding()
-                            .frame(maxWidth: 300.0)
-                            .background(selectedGoal == option ? Color.init(red: 104/255, green: 242/255, blue: 242/255) : Color.gray.opacity(0.3))
-                            .foregroundColor(.white)
-                            .cornerRadius(10)
-                            .font(.system(size: 30))
-                    }
-                }
+                arrayToButtons(arrayName: options, outputState: $selectedGoalType)
                 
                 NavigationLink(destination: LandingPage12()) {
                     Text("continue")
                 }
+                .font(.system(size: 20, weight: .bold, design: .rounded))
                 #if os(iOS)
                     .navigationBarHidden(true)
                 #endif
-                .font(.system(size: 20))
             }
             .customBackground("Landing Page #1")
-            .bold()
             .font(.system(size: 44, weight: .bold, design: .rounded))
             .foregroundColor(.black)
     }
@@ -296,25 +262,43 @@ struct LandingPage11: View {
 
 struct LandingPage12: View {
     
-    @State private var GoalDifficulty = 5.0
+    @State private var demoGoal: String? = nil
+    
+    let physicalGoals = ["Run a half marathon", "Lose 30 lbs of fat", "Gain 15 lbs of lean muscle", "Start eating healthier"]
+    
+    let mentalGoals = ["Build self confidence", "Lower my stress levels", "Overcome my social anxiety", "Become more disciplined"]
+    
+    let careerGoals = ["Get a promotion at my job", "Open up a business", "Achieve a work-life balance", "Get my dream job"]
+    
+    let financialGoals = ["Start earning passive income", "Pay off all my debt", "Improve my credit score", "Learn how to invest"]
+
+    let selectedGoalType = "physical 💪"
     
     var body: some View {
+        
         VStack {
-            Text("diffculy level?")
-            // Print (rounded) difficulty level
-            Text("\(round(GoalDifficulty * 10)/10)")
-                .padding(.vertical, 10)
-                .padding(.horizontal, 10.0)
+            
+            Text("select a demo goal?")
                 .multilineTextAlignment(.center)
-                .bold()
                 .font(.system(size: 44, weight: .bold, design: .rounded))
-                .foregroundColor(.black)
-            Gauge(value: GoalDifficulty, in: 0...10) {
-                Text("difficulty level")
+            
+            switch selectedGoalType {
+            case "physical 💪":
+                arrayToButtons(arrayName: physicalGoals, outputState: $demoGoal)
+            case "mental 🧠":
+                arrayToButtons(arrayName: mentalGoals, outputState: $demoGoal)
+            case "career 👨‍💼":
+                arrayToButtons(arrayName: careerGoals, outputState: $demoGoal)
+            case "financial 💰":
+                arrayToButtons(arrayName: financialGoals, outputState: $demoGoal)
+            default:
+                Text("Error - Please select a goal type")
             }
-            .gaugeStyle(.accessoryCircularCapacity)
-            Slider(value: $GoalDifficulty, in: 0...10, step: 0.5)
-                .frame(width: 300)
+            NavigationLink(destination: LandingPage14()) {
+                Text("continue")
+            }
+                .font(.system(size: 20, weight: .bold, design: .rounded))
+                .foregroundColor(.black)
         }
         .customBackground("Landing Page #1")
     #if os(iOS)
@@ -325,6 +309,125 @@ struct LandingPage12: View {
 
 
 
+struct LandingPage13: View {
+    
+    @State private var GoalDifficulty: Double = 5.0
+    private var redToGreenGradient = LinearGradient(gradient: Gradient(colors: [.green, .red]), startPoint: .leading, endPoint: .trailing)
+    
+    func numberToColor(number: Double) -> Color {
+        let percentRed = number/10.0
+        return Color(
+            red: percentRed,
+            green: 1.0 - percentRed,
+            blue: 0.0
+        )
+    }
+    
+    var body: some View {
+        
+        VStack {
+            VStack(spacing: -5) {
+                HStack {
+                    Text("how")
+                    Text(" hard")
+                        .foregroundColor(Color(red: 1.0, green: 0.0, blue: 0.0))
+                        .shadow(radius: 5)
+                }
+                Text(" is your goal?")
+            }
+            .lineSpacing(200.0)
+            .multilineTextAlignment(.center)
+            .font(.system(size: 44, weight: .bold, design: .rounded))
+            
+            Text((round(GoalDifficulty * 10)/10), format: .number.precision(.fractionLength(1)))
+                .padding(.vertical, 10)
+                .padding(.horizontal, 10.0)
+                .multilineTextAlignment(.center)
+                .font(.system(size: 44, weight: .bold, design: .rounded))
+                .shadow(radius: 5)
+                .foregroundColor(numberToColor(number: GoalDifficulty))
+            ZStack {
+                redToGreenGradient
+                    .frame(width: 200, height: 20)
+                    .cornerRadius(10)
+                    .shadow(radius: 5)
+                    .blur(radius: 1)
+                    .opacity(1.0)
+                Slider(value: $GoalDifficulty, in: 0...10, step: 0.5)
+                    .frame(width: 200)
+                    .tint(.clear)
+            }
+            NavigationLink(destination: LandingPage14()) {
+                Text("continue")
+            }
+                .font(.system(size: 20, weight: .bold, design: .rounded))
+                .foregroundColor(.black)
+        }
+        .customBackground("Landing Page #1")
+    #if os(iOS)
+        .navigationBarHidden(true)
+    #endif
+        
+    }
+}
+
+struct LandingPage14: View {
+    
+    @State private var deadline: Date = Date()
+    
+    let today = Calendar.current.date(byAdding: .day, value: 0, to: Date())!
+    
+    var timeLeftComponents: DateComponents {
+            Calendar.current.dateComponents(
+                [.year, .month, .weekOfMonth, .day],
+                from: today,
+                to: deadline
+            )
+        }
+    
+    var body: some View {
+            
+        VStack {
+            Text("what is your deadline for this goal?")
+                .padding(.horizontal, 20)
+            DatePicker("", selection: $deadline, in: Date()..., displayedComponents: .date)
+                .labelsHidden()
+            
+            if let year = timeLeftComponents.year,
+               let month = timeLeftComponents.month,
+               let week = timeLeftComponents.weekOfMonth,
+               let day = timeLeftComponents.day,
+               day != 0 || month != 0 || week != 0 || year != 0
+            
+            {
+                
+                Text("Time left: \(year)y \(month)m \(week)w \(day)d")
+                    .font(.headline)
+                    .foregroundColor(Color(red: 89/255, green: 89/255, blue: 89/255))
+                
+                
+                NavigationLink(destination: LandingPage14()) {
+                    Text("continue")
+                        .font(.system(size: 20, weight: .bold, design: .rounded))
+                        .padding(.top, 2)
+                }
+                
+            }
+                
+        }
+        .multilineTextAlignment(.center)
+        .font(.system(size: 44, weight: .bold, design: .rounded))
+        .foregroundColor(.black)
+        .customBackground("Landing Page #1")
+    #if os(iOS)
+        .navigationBarHidden(true)
+        .datePickerStyle(.wheel)
+    #endif
+    }
+}
+
+
+
 #Preview {
-    LandingPage1()
+    LandingPage14()
 }
