@@ -216,17 +216,19 @@ struct LandingPage9: View {
                 
                 arrayToButtons(arrayName: options, outputState: $selectedAgeGroup)
                 
-                NavigationLink(destination: LandingPage11()) {
-                    Text("continue")
+                if(selectedAgeGroup != nil) {
+                    NavigationLink(destination: LandingPage11()) {
+                        Text("continue")
+                    }
+                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                #if os(iOS)
+                    .navigationBarHidden(true)
+                #endif
                 }
-                .font(.system(size: 20, weight: .bold, design: .rounded))
             }
             .customBackground("Landing Page #1")
             .font(.system(size: 44, weight: .bold, design: .rounded))
             .foregroundColor(.black)
-    #if os(iOS)
-        .navigationBarHidden(true)
-    #endif
     }
 }
 
@@ -246,13 +248,15 @@ struct LandingPage11: View {
                 
                 arrayToButtons(arrayName: options, outputState: $selectedGoalType)
                 
-                NavigationLink(destination: LandingPage12()) {
-                    Text("continue")
+                if(selectedGoalType != nil) {
+                    NavigationLink(destination: LandingPage12(selectedGoalType: selectedGoalType!)) { // Adding the ! tells the compiler that, even though selected goal is optional, it promises that has a value
+                        Text("continue")
+                            .font(.system(size: 20, weight: .bold, design: .rounded))
+                    #if os(iOS)
+                        .navigationBarHidden(true)
+                    #endif
+                    }
                 }
-                .font(.system(size: 20, weight: .bold, design: .rounded))
-                #if os(iOS)
-                    .navigationBarHidden(true)
-                #endif
             }
             .customBackground("Landing Page #1")
             .font(.system(size: 44, weight: .bold, design: .rounded))
@@ -262,6 +266,7 @@ struct LandingPage11: View {
 
 struct LandingPage12: View {
     
+    public var selectedGoalType: String
     @State private var demoGoal: String? = nil
     
     let physicalGoals = ["Run a half marathon", "Lose 30 lbs of fat", "Gain 15 lbs of lean muscle", "Start eating healthier"]
@@ -271,8 +276,6 @@ struct LandingPage12: View {
     let careerGoals = ["Get a promotion at my job", "Open up a business", "Achieve a work-life balance", "Get my dream job"]
     
     let financialGoals = ["Start earning passive income", "Pay off all my debt", "Improve my credit score", "Learn how to invest"]
-
-    let selectedGoalType = "physical 💪"
     
     var body: some View {
         
@@ -294,16 +297,18 @@ struct LandingPage12: View {
             default:
                 Text("Error - Please select a goal type")
             }
-            NavigationLink(destination: LandingPage14()) {
-                Text("continue")
+            if(demoGoal != nil) {
+                NavigationLink(destination: LandingPage13()) {
+                    Text("continue")
+                }
+                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .foregroundColor(.black)
+            #if os(iOS)
+                .navigationBarHidden(true)
+            #endif
             }
-                .font(.system(size: 20, weight: .bold, design: .rounded))
-                .foregroundColor(.black)
         }
         .customBackground("Landing Page #1")
-    #if os(iOS)
-        .navigationBarHidden(true)
-    #endif
     }
 }
 
@@ -429,5 +434,5 @@ struct LandingPage14: View {
 
 
 #Preview {
-    LandingPage14()
+    LandingPage1()
 }
