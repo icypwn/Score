@@ -23,12 +23,14 @@ func arrayToButtons(arrayName: Array<String>, outputState: Binding<String?>) -> 
             Text(arrayElement)
                 .padding()
                 .frame(maxWidth: 300.0)
-                .background(outputState.wrappedValue == arrayElement ? Color.init(red: 104/255, green: 242/255, blue: 242/255) : Color.gray.opacity(0.3))
+                .background(outputState.wrappedValue == arrayElement ? Color.init(red: 167/255, green: 161/255, blue: 123/255) : Color.gray.opacity(0.3))
                 .foregroundColor(.white)
                 .cornerRadius(10)
                 .font(.system(size: 30, weight: .bold, design: .rounded))
         }
     }
+    
+        
     
     )
 }

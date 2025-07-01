@@ -7,317 +7,415 @@
 
 import SwiftUI
 
-struct LandingPage1: View {
+enum LandingPageStep {
+    case LP1
+    case LP2
+    case LP3
+    case LP4
+    case LP5
+    case LP6
+    case LP7
+    case LP8
+    case LP9
+    case LP10
+    case LP11
+    case LP12
+    case LP13
+    case LP14
+    case LP15
+}
+
+struct LandingPageNav: View {
     
-    // For flashing text
-    @State private var isVisible = true
+    // User info gathered from each section of the LP
+    
+    @State var currentStep: LandingPageStep = .LP1
+    @State private var selectedAgeGroup: String? = nil
+    @State private var selectedGoalType: String? = nil
+    @State private var userGoal: String = ""
+    @State private var goalDifficulty: Double = 5.0
+    @State private var deadline: Date = Date()
+    @State private var extraInformation: String = ""
+    
+    // Flag to determine when "tap anywhere" is active
+    @State private var tapAnywhere: Bool = true
+
+    private var exampleGoal: String {
+        switch selectedGoalType {
+            case "physical 💪":
+            return "run a half marathon"
+        case "mental 🧠":
+            return "read 10 books"
+        case "career 👨‍💼":
+            return "get my dream job"
+        case "financial 💰":
+            return "pay off my debt"
+        default:
+            return "insert goal here" // Unknown type
+        }
+    }
     
     var body: some View {
-        NavigationStack {
-            NavigationLink(destination: LandingPage2()) {
-                VStack {
-                    Text("hello there")
-                        .padding(.vertical, 70.0) // Separates the tap without moving the text above
-                    Text("tap anywhere to continue")
-                        .flashText(duration: 2.0)
-                        .font(.system(size: 15))
-                    
-                }
-                .customBackground("Landing Page #1")
-                .font(.system(size: 44, weight: .bold, design: .rounded))
-                .foregroundColor(.black)
+        
+    
+        ZStack {
+            
+            VStack {
+                
+            }
+            .customBackground("Landing Page #1")
+            
+            switch currentStep {
+            case .LP1:
+                LandingPage1()
+                    .transition(.opacity)
+            case .LP2:
+                LandingPage2()
+                    .transition(.opacity)
+            case .LP3:
+                LandingPage3()
+                    .transition(.opacity)
+            case .LP4:
+                LandingPage4()
+                    .transition(.opacity)
+            case .LP5:
+                LandingPage5()
+                    .transition(.opacity)
+            case .LP6:
+                LandingPage6()
+                    .transition(.opacity)
+            case .LP7:
+                LandingPage7()
+                    .transition(.opacity)
+            case .LP8:
+                LandingPage8()
+                    .transition(.opacity)
+            case .LP9:
+                // "Continue-based" navigation now
+                LandingPage9(selectedAgeGroup: $selectedAgeGroup, currentStep: $currentStep)
+                    .transition(.opacity)
+            case .LP10:
+                LandingPage10(selectedGoalType: $selectedGoalType, currentStep: $currentStep)
+                    .transition(.opacity)
+            case .LP11:
+                LandingPage11(userGoal: $userGoal, currentStep: $currentStep, exampleGoal: exampleGoal)
+                    .transition(.opacity)
+            case .LP12:
+                LandingPage12(goalDifficulty: $goalDifficulty, currentStep: $currentStep)
+                    .transition(.opacity)
+            case .LP13:
+                LandingPage13(deadline: $deadline, currentStep: $currentStep)
+                    .transition(.opacity)
+            case .LP14:
+                LandingPage14(extraInformation: $extraInformation, currentStep: $currentStep)
+                    .transition(.opacity)
+            case .LP15:
+                LandingPage15()
+                    .transition(.opacity)
+            }
+            
+            if(tapAnywhere) {
+                
+                Color.clear
+                    .contentShape(Rectangle())
+                    .ignoresSafeArea(.all)
+                    .onTapGesture {
+                        withAnimation {
+                            switch currentStep {
+                            case .LP1:
+                                currentStep = .LP2
+                            case .LP2:
+                                currentStep = .LP3
+                            case .LP3:
+                                currentStep = .LP4
+                            case .LP4:
+                                currentStep = .LP5
+                            case .LP5:
+                                currentStep = .LP6
+                            case .LP6:
+                                currentStep = .LP7
+                            case .LP7:
+                                currentStep = .LP8
+                            case .LP8:
+                                tapAnywhere = false
+                                currentStep = .LP9
+                            default:
+                                () // Do nothing (user tapped screen too fast between LP8 and LP9
+                            }
+                        }
+                    }
             }
         }
-        #if os(iOS)
-        // This line will only be compiled for iOS targets
-        .navigationBarHidden(true)
-        #endif
-        }
+    }
     
 }
 
-struct LandingPage2: View {
+struct LandingPage1: View {
+    
     var body: some View {
-        NavigationLink(destination: LandingPage3()) {
-            VStack {
-                VStack {
-                    Text("we are so")
-                    Text("proud of you")
-                }
+        VStack {
+            Text("hello there")
+                .font(.system(size: 44, weight: .bold, design: .rounded))
+                .foregroundColor(.white)
                 .padding(.vertical, 70.0)
-                Text("tap anywhere to continue")
-                    .flashText(duration: 2.0, hiddenDuration: 5.0)
-                    .font(.system(size: 15))
-            }
-            .customBackground("Landing Page #1")
-            .font(.system(size: 44, weight: .bold, design: .rounded))
-            .foregroundColor(.black)
+            Text("tap anywhere to continue")
+                .font(.system(size: 15, design: .rounded))
+                .foregroundColor(.white)
+                .flashText(duration: 2.0)
+                .font(.system(size: 15))
         }
-        #if os(iOS)
-        .navigationBarHidden(true)
-        #endif
+    }
+}
+
+struct LandingPage2: View {
+    
+    var body: some View {
+        VStack {
+            VStack(alignment: .leading) {
+                Text("we are so")
+                Text("proud of you")
+            }
+            .font(.system(size: 44, weight: .bold, design: .rounded))
+            .foregroundColor(.white)
+            .multilineTextAlignment(.leading)
+            .padding(.vertical, 70.0)
+            
+            Text("tap anywhere to continue")
+                .flashText(duration: 2.0, hiddenDuration: 5.0)
+                .font(.system(size: 15, design: .rounded))
+                .foregroundColor(.white)
+        }
     }
 }
 
 struct LandingPage3: View {
     var body: some View {
-        NavigationLink(destination: LandingPage4()) {
-            VStack {
-                Group {
-                    Text("fear stops") +
-                    Text(" 49%") +
-                    Text(" of people from") +
-                    Text(" pursuing their goals")
+        VStack {
+            VStack(alignment: .leading) {
+                HStack {
+                    Text("fear stops")
+                    Text("49%")
+                        .foregroundColor(Color(red: 0.5, green: 0.5, blue: 0.5))
+                        .shadow(radius: 5)
                 }
-                .padding(.horizontal, 40.0)
-                .padding(.vertical, 70.0)
-                Text("tap anywhere to continue")
-                    .flashText(duration: 2.0, hiddenDuration: 5.0)
-                    .font(.system(size: 15))
+                Text("of people from")
+                Text("pursuing their")
+                Text("goals")
             }
-            .customBackground("Landing Page #1")
             .font(.system(size: 44, weight: .bold, design: .rounded))
-            .foregroundColor(.black)
+            .padding(.vertical, 70.0)
+            Text("tap anywhere to continue")
+                .font(.system(size: 15, design: .rounded))
+                .flashText(duration: 2.0, hiddenDuration: 5.0)
         }
-    #if os(iOS)
-        .navigationBarHidden(true)
-    #endif
+        .foregroundColor(.white)
     }
 }
 
 struct LandingPage4: View {
     var body: some View {
-        NavigationLink(destination: LandingPage5()) {
-            VStack {
-                Group {
-                    Text("you're making a") +
-                    Text(" big") +
-                    Text(" step in the right direction")
+        VStack {
+            VStack(alignment: .leading) {
+                Text("you're making a")
+                HStack(spacing: 10.0) {
+                    Text("big step")
+                        .font(.system(size: 56, weight: .bold, design: .rounded))
+                    Text("in the")
                 }
-                    .padding(.horizontal, 40.0)
-                    .padding(.vertical, 70.0)
-                Text("tap anywhere to continue")
-                    .flashText(duration: 2.0, hiddenDuration: 5.0)
-                    .font(.system(size: 15))
+                Text("right direction")
             }
-            .customBackground("Landing Page #1")
             .font(.system(size: 44, weight: .bold, design: .rounded))
-            .foregroundColor(.black)
+            .padding(.vertical, 70.0)
+            Text("tap anywhere to continue")
+                .font(.system(size: 15, design: .rounded))
+                .flashText(duration: 2.0, hiddenDuration: 5.0)
         }
-    #if os(iOS)
-        .navigationBarHidden(true)
-    #endif
+        .foregroundColor(.white)
     }
 }
 
 struct LandingPage5: View {
     var body: some View {
-        NavigationLink(destination: LandingPage6()) {
-            VStack {
-                Text("and luckily for you...")
-                    .padding(.horizontal, 40.0)
-                    .padding(.vertical, 70.0)
-                Text("tap anywhere to continue")
-                    .flashText(duration: 2.0, hiddenDuration: 5.0)
-                    .font(.system(size: 15))
-            }
-            .customBackground("Landing Page #1")
-            .font(.system(size: 44, weight: .bold, design: .rounded))
-            .foregroundColor(.black)
+        VStack {
+            Text("and luckily for you...")
+                .font(.system(size: 44, weight: .bold, design: .rounded))
+                .padding(.horizontal, 40.0) // Used horizontal padding here because it's easier than making another VStack
+                .padding(.vertical, 70.0)
+            Text("tap anywhere to continue")
+                .font(.system(size: 15, design: .rounded))
+                .flashText(duration: 2.0, hiddenDuration: 5.0)
         }
-    #if os(iOS)
-        .navigationBarHidden(true)
-    #endif
+        .foregroundColor(.white)
     }
 }
 
 struct LandingPage6: View {
     var body: some View {
-        NavigationLink(destination: LandingPage7()) {
-            VStack {
-                Text("we're here to help!")
-                    .padding(.horizontal, 40.0)
-                    .padding(.vertical, 70.0)
-                Text("tap anywhere to continue")
-                    .flashText(duration: 2.0, hiddenDuration: 5.0)
-                    .font(.system(size: 15))
-            }
-            .customBackground("Landing Page #1")
-            .font(.system(size: 44, weight: .bold, design: .rounded))
-            .foregroundColor(.black)
+        VStack {
+            Text("we're here to help!")
+                .font(.system(size: 44, weight: .bold, design: .rounded))
+                .padding(.horizontal, 40.0)
+                .padding(.vertical, 70.0)
+            Text("tap anywhere to continue")
+                .font(.system(size: 15, design: .rounded))
+                .flashText(duration: 2.0, hiddenDuration: 5.0)
         }
-    #if os(iOS)
-        .navigationBarHidden(true)
-    #endif
+        .foregroundColor(.white)
     }
 }
 
 struct LandingPage7: View {
     var body: some View {
-        NavigationLink(destination: LandingPage8()) {
-            VStack {
-                Group {
-                    Text("people with an") +
-                    Text(" accountability partner") +
-                    Text(" are") +
-                    Text(" 95%") +
-                    Text(" more likely to") +
-                    Text(" reach their goals")
+        VStack {
+            VStack (alignment: .leading) {
+                Text("people with")
+                Text("an accountability")
+                HStack(spacing: 0.0) {
+                    Text("partner are")
+                    Text(" 95%")
+                        .foregroundColor(Color(red: 167/255, green: 161/255, blue: 123/255))
+                        .shadow(radius: 5)
                 }
-                .padding(.horizontal, 40.0)
-                .padding(.vertical, 70.0)
-                Text("tap anywhere to continue")
-                    .flashText(duration: 2.0, hiddenDuration: 5.0)
-                    .font(.system(size: 15))
+                Text("more likely to")
+                Text("reach their goals")
             }
-            .customBackground("Landing Page #1")
             .font(.system(size: 44, weight: .bold, design: .rounded))
-            .foregroundColor(.black)
+            .padding(.horizontal, 20.0)
+            .padding(.vertical, 70.0)
+            Text("tap anywhere to continue")
+                .font(.system(size: 15, design: .rounded))
+                .flashText(duration: 2.0, hiddenDuration: 5.0)
         }
-    #if os(iOS)
-        .navigationBarHidden(true)
-    #endif
+        .foregroundColor(.white)
     }
 }
 
 struct LandingPage8: View {
     var body: some View {
-        NavigationLink(destination: LandingPage9()) {
-            VStack {
-                Text("so let's get after this, together.")
-                    .padding(.horizontal, 40.0)
-                    .padding(.vertical, 70.0)
-                Text("tap anywhere to continue")
-                    .flashText(duration: 2.0, hiddenDuration: 5.0)
-                    .font(.system(size: 15))
-            }
-            .customBackground("Landing Page #1")
-            .font(.system(size: 44, weight: .bold, design: .rounded))
-            .foregroundColor(.black)
+        VStack {
+            Text("so let's get after this, together.")
+                .font(.system(size: 44, weight: .bold, design: .rounded))
+                .padding(.horizontal, 40.0)
+                .padding(.vertical, 70.0)
+            Text("tap anywhere to continue")
+                .font(.system(size: 15, design: .rounded))
+                .flashText(duration: 2.0, hiddenDuration: 5.0)
         }
-    #if os(iOS)
-        .navigationBarHidden(true)
-    #endif
+        .foregroundColor(.white)
     }
 }
 
-
 struct LandingPage9: View {
-    // Shared state that stores the selected label
-    @State private var selectedAgeGroup: String? = nil
+    @Binding var selectedAgeGroup: String?
+    @Binding var currentStep: LandingPageStep
 
     let options = ["14–24", "25–34", "35–44", "45-54", "55+"]
 
     var body: some View {
-                
-            VStack(spacing: 20) {
-                Text("how old are you?")
-                    .padding(.vertical, 10)
-                
-                arrayToButtons(arrayName: options, outputState: $selectedAgeGroup)
-                
-                if(selectedAgeGroup != nil) {
-                    NavigationLink(destination: LandingPage11()) {
-                        Text("continue")
+        VStack(spacing: 20) {
+            Text("how old are you?")
+                .font(.system(size: 44, weight: .bold, design: .rounded))
+                .padding(.vertical, 10)
+            
+            arrayToButtons(arrayName: options, outputState: $selectedAgeGroup)
+            
+            if(selectedAgeGroup != nil) {
+                Button("continue") {
+                    withAnimation {
+                        currentStep = .LP10
                     }
-                    .font(.system(size: 20, weight: .bold, design: .rounded))
-                #if os(iOS)
-                    .navigationBarHidden(true)
-                #endif
                 }
+                .font(.system(size: 20, weight: .bold, design: .rounded))
             }
-            .customBackground("Landing Page #1")
-            .font(.system(size: 44, weight: .bold, design: .rounded))
-            .foregroundColor(.black)
+        }
+        .foregroundColor(.white)
+    }
+}
+
+struct LandingPage10: View {
+    @Binding var selectedGoalType: String?
+    @Binding var currentStep: LandingPageStep
+    
+    
+    
+    // * These are what will define which model we use
+    let options = ["physical 💪", "mental 🧠", "career 👨‍💼", "financial 💰"]
+    
+    // Stops buttons from being clickable after continue is pressed
+    @State public var continueFlag: Bool = false
+
+    var body: some View {
+        VStack(spacing: 20) {
+            Text("goal type?")
+                .multilineTextAlignment(.center)
+                .padding(.vertical, 10)
+                .padding(.horizontal, 10.0)
+            
+                
+            arrayToButtons(arrayName: options, outputState: $selectedGoalType)
+                .disabled(continueFlag) // Stops button functionality after continue is pressed
+            
+            if(selectedGoalType != nil) {
+                Button("continue") {
+                    withAnimation {
+                        continueFlag = true
+                        currentStep = .LP11
+                    }
+                }
+                .font(.system(size: 20, weight: .bold, design: .rounded))
+            }
+        }
+        .font(.system(size: 44, weight: .bold, design: .rounded))
+        .foregroundColor(.white)
     }
 }
 
 struct LandingPage11: View {
-    // Shared state that stores the selected label
-    @State private var selectedGoalType: String? = nil
-
-    let options = ["physical 💪", "mental 🧠", "career 👨‍💼", "financial 💰"]
-
-    var body: some View {
-                
-            VStack(spacing: 20) {
-                Text("goal type?")
-                    .padding(.vertical, 10)
-                    .padding(.horizontal, 10.0)
-                    .multilineTextAlignment(.center)
-                
-                arrayToButtons(arrayName: options, outputState: $selectedGoalType)
-                
-                if(selectedGoalType != nil) {
-                    NavigationLink(destination: LandingPage12(selectedGoalType: selectedGoalType!)) { // Adding the ! tells the compiler that, even though selected goal is optional, it promises that has a value
-                        Text("continue")
-                            .font(.system(size: 20, weight: .bold, design: .rounded))
-                    #if os(iOS)
-                        .navigationBarHidden(true)
-                    #endif
-                    }
-                }
-            }
-            .customBackground("Landing Page #1")
-            .font(.system(size: 44, weight: .bold, design: .rounded))
-            .foregroundColor(.black)
-    }
-}
-
-struct LandingPage12: View {
     
-    public var selectedGoalType: String
-    @State private var demoGoal: String? = nil
+    @Binding var userGoal: String
+    @Binding var currentStep: LandingPageStep
+    public var exampleGoal: String
     
-    let physicalGoals = ["Run a half marathon", "Lose 30 lbs of fat", "Gain 15 lbs of lean muscle", "Start eating healthier"]
-    
-    let mentalGoals = ["Build self confidence", "Lower my stress levels", "Overcome my social anxiety", "Become more disciplined"]
-    
-    let careerGoals = ["Get a promotion at my job", "Open up a business", "Achieve a work-life balance", "Get my dream job"]
-    
-    let financialGoals = ["Start earning passive income", "Pay off all my debt", "Improve my credit score", "Learn how to invest"]
+    @State public var continueFlag: Bool = false
     
     var body: some View {
         
         VStack {
             
-            Text("select a demo goal?")
+            Text("describe your goal")
                 .multilineTextAlignment(.center)
                 .font(.system(size: 44, weight: .bold, design: .rounded))
+                .foregroundColor(.white)
             
-            switch selectedGoalType {
-            case "physical 💪":
-                arrayToButtons(arrayName: physicalGoals, outputState: $demoGoal)
-            case "mental 🧠":
-                arrayToButtons(arrayName: mentalGoals, outputState: $demoGoal)
-            case "career 👨‍💼":
-                arrayToButtons(arrayName: careerGoals, outputState: $demoGoal)
-            case "financial 💰":
-                arrayToButtons(arrayName: financialGoals, outputState: $demoGoal)
-            default:
-                Text("Error - Please select a goal type")
-            }
-            if(demoGoal != nil) {
-                NavigationLink(destination: LandingPage13()) {
-                    Text("continue")
+            TextField("\(exampleGoal)...", text: $userGoal)
+                .foregroundColor(.gray)
+                .font(.system(size: 25, weight: .bold, design: .rounded))
+                .frame(width: 300, height: 0, alignment: .center)
+                .padding(.vertical, 30)
+                .padding(.bottom, 25)
+                .disabled(continueFlag)
+
+            if(userGoal != "") {
+                Button("continue") {
+                    withAnimation {
+                        continueFlag = true
+                        currentStep = .LP12
+                    }
                 }
-                    .font(.system(size: 20, weight: .bold, design: .rounded))
-                    .foregroundColor(.black)
-            #if os(iOS)
-                .navigationBarHidden(true)
-            #endif
+                .font(.system(size: 20, weight: .bold, design: .rounded))
+                .foregroundColor(.white)
+                
             }
         }
-        .customBackground("Landing Page #1")
     }
+    
 }
 
-
-
-struct LandingPage13: View {
+struct LandingPage12: View {
     
-    @State private var GoalDifficulty: Double = 5.0
-    private var redToGreenGradient = LinearGradient(gradient: Gradient(colors: [.green, .red]), startPoint: .leading, endPoint: .trailing)
+    @Binding var goalDifficulty: Double
+    @Binding var currentStep: LandingPageStep
+    @State public var continueFlag: Bool = false
     
     func numberToColor(number: Double) -> Color {
         let percentRed = number/10.0
@@ -330,6 +428,8 @@ struct LandingPage13: View {
     
     var body: some View {
         
+        let redToGreenGradient = LinearGradient(gradient: Gradient(colors: [.green, .red]), startPoint: .leading, endPoint: .trailing)
+        
         VStack {
             VStack(spacing: -5) {
                 HStack {
@@ -338,19 +438,20 @@ struct LandingPage13: View {
                         .foregroundColor(Color(red: 1.0, green: 0.0, blue: 0.0))
                         .shadow(radius: 5)
                 }
-                Text(" is your goal?")
+                Text("is your goal?")
             }
+            .foregroundColor(.white)
             .lineSpacing(200.0)
             .multilineTextAlignment(.center)
             .font(.system(size: 44, weight: .bold, design: .rounded))
             
-            Text((round(GoalDifficulty * 10)/10), format: .number.precision(.fractionLength(1)))
+            Text((round(goalDifficulty * 10)/10), format: .number.precision(.fractionLength(1)))
                 .padding(.vertical, 10)
                 .padding(.horizontal, 10.0)
                 .multilineTextAlignment(.center)
                 .font(.system(size: 44, weight: .bold, design: .rounded))
                 .shadow(radius: 5)
-                .foregroundColor(numberToColor(number: GoalDifficulty))
+                .foregroundColor(numberToColor(number: goalDifficulty))
             ZStack {
                 redToGreenGradient
                     .frame(width: 200, height: 20)
@@ -358,81 +459,185 @@ struct LandingPage13: View {
                     .shadow(radius: 5)
                     .blur(radius: 1)
                     .opacity(1.0)
-                Slider(value: $GoalDifficulty, in: 0...10, step: 0.5)
+                Slider(value: $goalDifficulty, in: 0...10, step: 0.5)
                     .frame(width: 200)
                     .tint(.clear)
+                    .disabled(continueFlag)
             }
-            NavigationLink(destination: LandingPage14()) {
-                Text("continue")
+            Button("continue") {
+                withAnimation {
+                    continueFlag = true
+                    currentStep = .LP13
+                }
             }
-                .font(.system(size: 20, weight: .bold, design: .rounded))
-                .foregroundColor(.black)
+            .font(.system(size: 20, weight: .bold, design: .rounded))
+            .foregroundColor(.white)
         }
-        .customBackground("Landing Page #1")
-    #if os(iOS)
-        .navigationBarHidden(true)
-    #endif
-        
     }
 }
 
-struct LandingPage14: View {
+struct LandingPage13: View {
     
-    @State private var deadline: Date = Date()
+    @Binding var deadline: Date
+    @Binding var currentStep: LandingPageStep
+    @State public var continueFlag: Bool = false
     
     let today = Calendar.current.date(byAdding: .day, value: 0, to: Date())!
     
     var timeLeftComponents: DateComponents {
-            Calendar.current.dateComponents(
-                [.year, .month, .weekOfMonth, .day],
-                from: today,
-                to: deadline
-            )
-        }
+        Calendar.current.dateComponents(
+            [.year, .month, .weekOfMonth, .day],
+            from: today,
+            to: deadline
+        )
+    }
     
     var body: some View {
-            
+        
         VStack {
-            Text("what is your deadline for this goal?")
-                .padding(.horizontal, 20)
+            VStack(alignment: .leading) {
+                Text("what is your deadline")
+                Text("for this goal")
+            }
+                .multilineTextAlignment(.leading)
+                .font(.system(size: 40, weight: .bold, design: .rounded))
+                .padding(.horizontal, 10)
+                .foregroundColor(.white)
             DatePicker("", selection: $deadline, in: Date()..., displayedComponents: .date)
+                .foregroundColor(.white)
                 .labelsHidden()
+                #if os(iOS)
+                .datePickerStyle(.wheel)
+                #endif
+                .disabled(continueFlag)
+                .colorScheme(.dark)
             
             if let year = timeLeftComponents.year,
                let month = timeLeftComponents.month,
                let week = timeLeftComponents.weekOfMonth,
                let day = timeLeftComponents.day,
                day != 0 || month != 0 || week != 0 || year != 0
-            
+                
             {
                 
                 Text("Time left: \(year)y \(month)m \(week)w \(day)d")
                     .font(.headline)
                     .foregroundColor(Color(red: 89/255, green: 89/255, blue: 89/255))
+                    .multilineTextAlignment(.center)
+                    .font(.system(size: 44, weight: .bold, design: .rounded))
+                    .foregroundColor(.white)
+                    .padding(.bottom, 5)
                 
-                
-                NavigationLink(destination: LandingPage14()) {
-                    Text("continue")
-                        .font(.system(size: 20, weight: .bold, design: .rounded))
-                        .padding(.top, 2)
+                Button("continue") {
+                    withAnimation {
+                        continueFlag = true
+                        currentStep = .LP14
+                    }
                 }
+                .font(.system(size: 20, weight: .bold, design: .rounded))
+                .foregroundColor(.white)
                 
             }
-                
         }
-        .multilineTextAlignment(.center)
-        .font(.system(size: 44, weight: .bold, design: .rounded))
-        .foregroundColor(.black)
-        .customBackground("Landing Page #1")
-    #if os(iOS)
-        .navigationBarHidden(true)
-        .datePickerStyle(.wheel)
-    #endif
     }
 }
 
+struct LandingPage14: View {
+    
+    @Binding var extraInformation: String
+    @Binding var currentStep: LandingPageStep
+    
+    @State public var continueFlag: Bool = false
+    
+    var body: some View {
+        
+        VStack {
+            
+            Text("note any past experience or relevant info")
+                .multilineTextAlignment(.leading)
+                .padding(.horizontal, 40)
+                .font(.system(size: 44, weight: .bold, design: .rounded))
+                .foregroundColor(.white)
+            
+            TextField("type here...", text: $extraInformation)
+                .font(.system(size: 25, design: .rounded))
+                .frame(width: 300, height: 0, alignment: .center)
+                .padding(.vertical, 30)
+                .padding(.bottom, 25)
+                .disabled(continueFlag)
+            
+            if(extraInformation != "") {
+                Button("continue") {
+                    withAnimation {
+                        continueFlag = true
+                        currentStep = .LP1
+                    }
+                }
+                .font(.system(size: 20, weight: .bold, design: .rounded))
+                .foregroundColor(.white)
+                
+            }
+        }
+    }
+    
+}
 
+struct LandingPage15: View {
 
+    // Problem: I want to make a value that is based on updating its currentValue by iterating through a loop
+    
+    @State private var loadingStart: Double = 0.0
+    @State private var loadingEnd: Double = 0.0
+    
+    
+    private var loadingMinimum = 0.0
+    private var loadingMaximum = 100.0
+    
+    private let timer = Timer.publish(every: 0.005, on: .main, in: .common).autoconnect()
+
+    
+    var body: some View {
+        
+        VStack {
+            Text("creating your custom plan...")
+                .padding(.bottom, 20)
+                .font(.system(size: 40, weight: .bold, design: .rounded))
+        }
+        
+        ZStack {
+            Circle()
+                .stroke(Color.black, lineWidth: 5)
+                .frame(width: 100, height: 100)
+            
+            Circle()
+                .trim(from: loadingStart, to: loadingEnd)
+                .stroke(Color.white, lineWidth: 5)
+                .frame(width: 100, height: 100)
+                .opacity(loadingEnd - (loadingStart*loadingStart*loadingStart*loadingStart*loadingStart)) // lmfao
+        }
+        .onReceive(timer) { _ in
+            if(loadingEnd < 1.0) {
+                loadingEnd += 0.005
+            }
+            
+            if(loadingEnd >= 1.0) {
+                loadingStart += 0.005
+            }
+            
+            if(loadingStart >= 1.0) {
+                loadingStart = 0.0
+                loadingEnd = 0.0
+            }
+            
+            
+        }
+        
+    }
+    
+    
+    
+}
+    
 #Preview {
-    LandingPage1()
+    LandingPageNav()
 }
