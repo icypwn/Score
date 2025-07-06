@@ -346,8 +346,8 @@ struct LandingPage10: View {
 
     var body: some View {
         VStack(spacing: 20) {
-            Text("goal type?")
-                .multilineTextAlignment(.center)
+            Text("what's your goal type?")
+                .multilineTextAlignment(.leading)
                 .padding(.vertical, 10)
                 .padding(.horizontal, 10.0)
             
@@ -560,7 +560,8 @@ struct LandingPage14: View {
                 .foregroundColor(.white)
             
             TextField("type here...", text: $extraInformation)
-                .font(.system(size: 25, design: .rounded))
+                .foregroundColor(.gray)
+                .font(.system(size: 25, weight: .bold, design: .rounded))
                 .frame(width: 300, height: 0, alignment: .center)
                 .padding(.vertical, 30)
                 .padding(.bottom, 25)
@@ -570,7 +571,7 @@ struct LandingPage14: View {
                 Button("continue") {
                     withAnimation {
                         continueFlag = true
-                        currentStep = .LP1
+                        currentStep = .LP15
                     }
                 }
                 .font(.system(size: 20, weight: .bold, design: .rounded))
@@ -589,48 +590,165 @@ struct LandingPage15: View {
     @State private var loadingStart: Double = 0.0
     @State private var loadingEnd: Double = 0.0
     
+    // String dictionary where the key is a string and value is anything
+    @State private var response: Data?
+    @State private var decoded_response: GoalResponse?
+    @State private var decoded_response_flag: Bool = false
+    @State private var errorMessage: String?
+    @State private var dayIndex: Int = 0
     
     private var loadingMinimum = 0.0
     private var loadingMaximum = 100.0
     
     private let timer = Timer.publish(every: 0.005, on: .main, in: .common).autoconnect()
+    
+    /// Represents a single task and the overall theme for a day.
+    struct Day: Codable {
+        let theme: String
+        let tasks: [String]
+    }
 
+    /// Represents a week, containing a theme and an array of 7 days.
+    struct Week: Codable {
+        let theme: String
+        let days: [Day]
+    }
+
+    /// Represents the top-level response object containing the week.
+    /// This is the struct that we'll pass to the decoder
+    struct GoalResponse: Codable {
+        let week: Week
+    }
+    
+    /// Takes a week object and prints out the info from each day (theme & tasks)
+    func weekToDayInfo(data: GoalResponse) -> [AnyView] {
+        
+        print("Recieved Week: \(data.week)")
+        
+        // Define a view array so we can append the day views
+        var daysInfo: [AnyView] = []
+        
+        // When we loop over a JSON object, we must consider the key and the value
+        // In this instance, day is the key and dayInfo is the value
+        // We only care about the value
+        
+        // day is the first key
+        // dayInfo is the first value
+        for day in data.week.days {
+            print("Recieved day (might just be the key): \(day)")
+            // Caste dayInfo as a dictionary to escape the any type
+            if let theme = day.theme as? String,
+                let tasks = day.tasks as? [String] {
+                print("Recieved theme: \(theme)")
+                print("Recieved tasks (array): \(tasks)")
+                daysInfo.append(
+                    AnyView (
+                        VStack(alignment: .leading, spacing: 20) {
+                            Text(theme)
+                                .fixedSize(horizontal: false, vertical: true) // Allows text to wrap if an invidual word is too long to meet the padding requirement (ignores parent)
+                                .font(.system(size: 40, weight: .bold, design: .rounded))
+                                .padding(.bottom, 20)
+
+                            
+                            ForEach(tasks, id: \.self) { task in
+                                
+                                // Loop through each character in the string
+                                
+                                Text("-\(task)")
+                                    .fixedSize(horizontal: false, vertical: true)
+                                    .font(.system(size: 25, weight: .bold, design: .rounded))
+                            }
+                        }
+                        .padding(.horizontal, 45) // Adds 20 points of space from the left edge
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .foregroundStyle(.white)
+                        .transition(.opacity)
+
+                    )
+                )
+                
+              }
+        }
+        
+        print("Returning daysInfo: \(daysInfo)")
+        
+        return daysInfo
+        
+    }
+    
+    // When the response is finished (could also use a flag for performance)
     
     var body: some View {
         
-        VStack {
-            Text("creating your custom plan...")
-                .padding(.bottom, 20)
-                .font(.system(size: 40, weight: .bold, design: .rounded))
+        if(!decoded_response_flag) {
+            
+            VStack(spacing: 30) {
+                Text("creating your custom plan...")
+                    .foregroundStyle(.white)
+                    .padding(.bottom, 20)
+                    .font(.system(size: 40, weight: .bold, design: .rounded))
+                Circle()
+                    .trim(from: loadingStart, to: loadingEnd)
+                    .stroke(Color(red: 167/255, green: 161/255, blue: 123/255), lineWidth: 5)
+                    .frame(width: 100, height: 100)
+                    .opacity(loadingEnd - (loadingStart*loadingStart*loadingStart*loadingStart*loadingStart)) // lmfao
+                    .shadow(radius: 5)
+            }
+            /// Asynchronus task that concurrently prompts CGPT while loading screen is showing
+            .task {
+                do {
+                    // This is where you call your async function
+                    response = try await gptCall()
+                    // JSON -> Dictionaries!
+                    let decoder = JSONDecoder()
+                    decoded_response = try decoder.decode(GoalResponse.self, from: response!)
+                    decoded_response_flag = true
+                    
+                    print("Response: \(response!)")
+                } catch {
+                    // Handle the error, e.g., show an alert
+                    errorMessage = error.localizedDescription
+                }
+            }
+        }
+        else {
+            let dayArray = weekToDayInfo(data: decoded_response!)
+            VStack {
+                dayArray[dayIndex]
+                Button("continue") {
+                    withAnimation {
+                        dayIndex += 1
+                    }
+                }
+                .font(.system(size: 20, weight: .bold, design: .rounded))
+                .foregroundStyle(.white)
+                .padding(.top, 20) // Separate view than main structure
+            }
         }
         
-        ZStack {
-            Circle()
-                .stroke(Color.black, lineWidth: 5)
-                .frame(width: 100, height: 100)
-            
-            Circle()
-                .trim(from: loadingStart, to: loadingEnd)
-                .stroke(Color.white, lineWidth: 5)
-                .frame(width: 100, height: 100)
-                .opacity(loadingEnd - (loadingStart*loadingStart*loadingStart*loadingStart*loadingStart)) // lmfao
-        }
-        .onReceive(timer) { _ in
-            if(loadingEnd < 1.0) {
-                loadingEnd += 0.005
-            }
-            
-            if(loadingEnd >= 1.0) {
-                loadingStart += 0.005
-            }
-            
-            if(loadingStart >= 1.0) {
-                loadingStart = 0.0
-                loadingEnd = 0.0
-            }
+
             
             
-        }
+        
+        
+//        #if !targetEnvironment(simulator) // Stop concurrency during previews (causes crash)
+//        .onReceive(timer) { _ in
+//            if(loadingEnd < 1.0) {
+//                loadingEnd += 0.005
+//            }
+//            
+//            if(loadingEnd >= 1.0) {
+//                loadingStart += 0.005
+//            }
+//            
+//            if(loadingStart >= 1.0) {
+//                loadingStart = 0.0
+//                loadingEnd = 0.0
+//            }
+//        }
+//        #endif
+        
+        
         
     }
     

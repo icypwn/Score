@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		7927EF3C2E17545700AFC6E7 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 7927EF3B2E17544D00AFC6E7 /* .gitignore */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		792B7ECB2DF7B9C800F7B24B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -24,14 +28,39 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		7927EF3B2E17544D00AFC6E7 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		792B7EBC2DF7B9C600F7B24B /* Score.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Score.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		792B7ECA2DF7B9C800F7B24B /* ScoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		792B7ED42DF7B9C800F7B24B /* ScoreUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScoreUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		7927EF352E1743FF00AFC6E7 /* Exceptions for "Score" folder in "Score" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Secrets.plist,
+			);
+			target = 792B7EBB2DF7B9C600F7B24B /* Score */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		7927EF362E1743FF00AFC6E7 /* Exceptions for "Score" folder in "Compile Sources" phase from "Score" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = 792B7EB82DF7B9C600F7B24B /* Sources */;
+			membershipExceptions = (
+				Secrets.plist,
+			);
+		};
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		792B7EBE2DF7B9C600F7B24B /* Score */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				7927EF352E1743FF00AFC6E7 /* Exceptions for "Score" folder in "Score" target */,
+				7927EF362E1743FF00AFC6E7 /* Exceptions for "Score" folder in "Compile Sources" phase from "Score" target */,
+			);
 			path = Score;
 			sourceTree = "<group>";
 		};
@@ -75,6 +104,7 @@
 		792B7EB32DF7B9C600F7B24B = {
 			isa = PBXGroup;
 			children = (
+				7927EF3B2E17544D00AFC6E7 /* .gitignore */,
 				792B7EBE2DF7B9C600F7B24B /* Score */,
 				792B7ECD2DF7B9C800F7B24B /* ScoreTests */,
 				792B7ED72DF7B9C800F7B24B /* ScoreUITests */,
@@ -212,6 +242,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7927EF3C2E17545700AFC6E7 /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
