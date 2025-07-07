@@ -60,7 +60,7 @@ struct LandingPageNav: View {
     
         ZStack {
             
-            VStack {
+            VStack(alignment: .leading, spacing: 20) {
                 
             }
             .customBackground("Landing Page #1")
@@ -152,8 +152,17 @@ struct LandingPageNav: View {
 
 struct LandingPage1: View {
     
+    private var catFact: String = "3 2-legged cats have 13.5 lives"
+        
     var body: some View {
-        VStack {
+        VStack(alignment: .leading) {
+            goldNumbersFromString(string: catFact)
+                .fixedSize(horizontal: false, vertical: true)
+                .font(.system(size: 44, weight: .bold, design: .rounded))
+                .padding(.horizontal, 40)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            
+            
             Text("hello there")
                 .font(.system(size: 44, weight: .bold, design: .rounded))
                 .foregroundColor(.white)
