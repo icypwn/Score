@@ -23,6 +23,8 @@ enum LandingPageStep {
     case LP13
     case LP14
     case LP15
+    case LP16
+    case LP17
 }
 
 struct LandingPageNav: View {
@@ -30,18 +32,20 @@ struct LandingPageNav: View {
     // User info gathered from each section of the LP
     
     @State var currentStep: LandingPageStep = .LP1
-    @State private var selectedAgeGroup: String? = nil
-    @State private var selectedGoalType: String? = nil
+    @State private var ageGroup: String = ""
+    @State private var goalType: String = ""
     @State private var userGoal: String = ""
-    @State private var goalDifficulty: Double = 5.0
+    @State private var goalDifficulty: Float16 = 5.0
     @State private var deadline: Date = Date()
     @State private var extraInformation: String = ""
+    @State private var totalDays: Int16 = 0
+    @State private var coachingStyle: String = ""
     
     // Flag to determine when "tap anywhere" is active
     @State private var tapAnywhere: Bool = true
 
     private var exampleGoal: String {
-        switch selectedGoalType {
+        switch goalType {
             case "physical 💪":
             return "run a half marathon"
         case "mental 🧠":
@@ -92,10 +96,10 @@ struct LandingPageNav: View {
                     .transition(.opacity)
             case .LP9:
                 // "Continue-based" navigation now
-                LandingPage9(selectedAgeGroup: $selectedAgeGroup, currentStep: $currentStep)
+                LandingPage9(ageGroup: $ageGroup, currentStep: $currentStep)
                     .transition(.opacity)
             case .LP10:
-                LandingPage10(selectedGoalType: $selectedGoalType, currentStep: $currentStep)
+                LandingPage10(goalType: $goalType, currentStep: $currentStep)
                     .transition(.opacity)
             case .LP11:
                 LandingPage11(userGoal: $userGoal, currentStep: $currentStep, exampleGoal: exampleGoal)
@@ -104,13 +108,27 @@ struct LandingPageNav: View {
                 LandingPage12(goalDifficulty: $goalDifficulty, currentStep: $currentStep)
                     .transition(.opacity)
             case .LP13:
-                LandingPage13(deadline: $deadline, currentStep: $currentStep)
+                LandingPage13(deadline: $deadline, totalDays: $totalDays, currentStep: $currentStep)
                     .transition(.opacity)
             case .LP14:
                 LandingPage14(extraInformation: $extraInformation, currentStep: $currentStep)
                     .transition(.opacity)
             case .LP15:
-                LandingPage15()
+                LandingPage15(coachingStyle: $coachingStyle, currentStep: $currentStep)
+                .transition(.opacity)
+            case .LP16:
+                LandingPage16(
+                    ageGroup: $ageGroup,
+                    goalType: $goalType,
+                    goal: $userGoal,
+                    difficulty: $goalDifficulty,
+                    days: $totalDays,
+                    pastExperience: $extraInformation,
+                    coachingStyle: $coachingStyle,
+                    currentStep: $currentStep)
+                    .transition(.opacity)
+            case .LP17:
+                LandingPage17()
                     .transition(.opacity)
             }
             
@@ -151,17 +169,9 @@ struct LandingPageNav: View {
 }
 
 struct LandingPage1: View {
-    
-    private var catFact: String = "3 2-legged cats have 13.5 lives"
-        
-    var body: some View {
-        VStack(alignment: .leading) {
-            goldNumbersFromString(string: catFact)
-                .fixedSize(horizontal: false, vertical: true)
-                .font(.system(size: 44, weight: .bold, design: .rounded))
-                .padding(.horizontal, 40)
-                .frame(maxWidth: .infinity, alignment: .leading)
             
+    var body: some View {
+        VStack {
             
             Text("hello there")
                 .font(.system(size: 44, weight: .bold, design: .rounded))
@@ -315,7 +325,7 @@ struct LandingPage8: View {
 }
 
 struct LandingPage9: View {
-    @Binding var selectedAgeGroup: String?
+    @Binding var ageGroup: String
     @Binding var currentStep: LandingPageStep
 
     let options = ["14–24", "25–34", "35–44", "45-54", "55+"]
@@ -326,9 +336,8 @@ struct LandingPage9: View {
                 .font(.system(size: 44, weight: .bold, design: .rounded))
                 .padding(.vertical, 10)
             
-            arrayToButtons(arrayName: options, outputState: $selectedAgeGroup)
-            
-            if(selectedAgeGroup != nil) {
+            arrayToButtons(arrayName: options, outputState: $ageGroup)
+            if(ageGroup != "") {
                 Button("continue") {
                     withAnimation {
                         currentStep = .LP10
@@ -342,7 +351,7 @@ struct LandingPage9: View {
 }
 
 struct LandingPage10: View {
-    @Binding var selectedGoalType: String?
+    @Binding var goalType: String
     @Binding var currentStep: LandingPageStep
     
     
@@ -361,10 +370,10 @@ struct LandingPage10: View {
                 .padding(.horizontal, 10.0)
             
                 
-            arrayToButtons(arrayName: options, outputState: $selectedGoalType)
+            arrayToButtons(arrayName: options, outputState: $goalType)
                 .disabled(continueFlag) // Stops button functionality after continue is pressed
             
-            if(selectedGoalType != nil) {
+            if(goalType != "") {
                 Button("continue") {
                     withAnimation {
                         continueFlag = true
@@ -422,7 +431,7 @@ struct LandingPage11: View {
 
 struct LandingPage12: View {
     
-    @Binding var goalDifficulty: Double
+    @Binding var goalDifficulty: Float16
     @Binding var currentStep: LandingPageStep
     @State public var continueFlag: Bool = false
     
@@ -460,7 +469,7 @@ struct LandingPage12: View {
                 .multilineTextAlignment(.center)
                 .font(.system(size: 44, weight: .bold, design: .rounded))
                 .shadow(radius: 5)
-                .foregroundColor(numberToColor(number: goalDifficulty))
+                .foregroundColor(numberToColor(number: Double(goalDifficulty)))
             ZStack {
                 redToGreenGradient
                     .frame(width: 200, height: 20)
@@ -488,6 +497,7 @@ struct LandingPage12: View {
 struct LandingPage13: View {
     
     @Binding var deadline: Date
+    @Binding var totalDays: Int16
     @Binding var currentStep: LandingPageStep
     @State public var continueFlag: Bool = false
     
@@ -539,6 +549,9 @@ struct LandingPage13: View {
                 
                 Button("continue") {
                     withAnimation {
+                        let timeInterval = deadline.timeIntervalSince(today) // (seconds)
+                        let daysDifference = Int16(timeInterval / 86400) // Days -> Seconds (86400 seconds in a day)
+                        totalDays = daysDifference
                         continueFlag = true
                         currentStep = .LP14
                     }
@@ -593,23 +606,73 @@ struct LandingPage14: View {
 }
 
 struct LandingPage15: View {
+    @Binding var coachingStyle: String
+    @Binding var currentStep: LandingPageStep
+    
+    
+    
+    // * These are what will define system prompt
+    let options = ["chill 😎", "neutral 🙂", "assertive 😠", "goggins 💀"]
+    
+    // Stops buttons from being clickable after continue is pressed
+    @State public var continueFlag: Bool = false
 
-    // Problem: I want to make a value that is based on updating its currentValue by iterating through a loop
+    var body: some View {
+        VStack(spacing: 20) {
+            Text("what coaching style?")
+                .multilineTextAlignment(.leading)
+                .padding(.vertical, 10)
+                .padding(.horizontal, 10.0)
+            
+                
+            arrayToButtons(arrayName: options, outputState: $coachingStyle)
+                .disabled(continueFlag) // Stops button functionality after continue is pressed
+            
+            if(coachingStyle != "") {
+                Button("continue") {
+                    withAnimation {
+                        continueFlag = true
+                        currentStep = .LP16
+                    }
+                }
+                .font(.system(size: 20, weight: .bold, design: .rounded))
+            }
+        }
+        .font(.system(size: 44, weight: .bold, design: .rounded))
+        .foregroundColor(.white)
+    }
+}
+
+struct LandingPage16: View {
     
-    @State private var loadingStart: Double = 0.0
-    @State private var loadingEnd: Double = 0.0
+    // TODO Make these variables private by moving them or doing something here
     
+    // When we call the LandingPage function, swift thinks these are arguments for the functions and passes an error when it "tries" to access them
+    
+    @State public var loadingStart: Double = 0.0
+    @State public var loadingEnd: Double = 0.0
+
     // String dictionary where the key is a string and value is anything
-    @State private var response: Data?
-    @State private var decoded_response: GoalResponse?
-    @State private var decoded_response_flag: Bool = false
-    @State private var errorMessage: String?
-    @State private var dayIndex: Int = 0
+    @State public var response: Data?
+    @State public var decoded_response: GoalResponse?
+    @State public var decoded_response_flag: Bool = false
+    @State public var errorMessage: String?
+    @State public var dayIndex: Int = -1
     
-    private var loadingMinimum = 0.0
-    private var loadingMaximum = 100.0
+    public var loadingMinimum = 0.0
+    public var loadingMaximum = 100.0
     
     private let timer = Timer.publish(every: 0.005, on: .main, in: .common).autoconnect()
+    
+    // All data we need to prompt GPT
+    @Binding var ageGroup: String
+    @Binding var goalType: String
+    @Binding var goal: String
+    @Binding var difficulty: Float16
+    @Binding var days: Int16
+    @Binding var pastExperience: String
+    @Binding var coachingStyle: String
+    @Binding var currentStep: LandingPageStep
     
     /// Represents a single task and the overall theme for a day.
     struct Day: Codable {
@@ -632,8 +695,6 @@ struct LandingPage15: View {
     /// Takes a week object and prints out the info from each day (theme & tasks)
     func weekToDayInfo(data: GoalResponse) -> [AnyView] {
         
-        print("Recieved Week: \(data.week)")
-        
         // Define a view array so we can append the day views
         var daysInfo: [AnyView] = []
         
@@ -644,26 +705,25 @@ struct LandingPage15: View {
         // day is the first key
         // dayInfo is the first value
         for day in data.week.days {
-            print("Recieved day (might just be the key): \(day)")
             // Caste dayInfo as a dictionary to escape the any type
-            if let theme = day.theme as? String,
-                let tasks = day.tasks as? [String] {
-                print("Recieved theme: \(theme)")
-                print("Recieved tasks (array): \(tasks)")
-                daysInfo.append(
-                    AnyView (
+            let theme = day.theme
+            let tasks = day.tasks
+            daysInfo.append(
+                AnyView (
+                    VStack(alignment: .center) {
+                        Text(theme)
+                            .fixedSize(horizontal: false, vertical: true) // Allows text to wrap if an invidual word is too long to meet the padding requirement (ignores parent)
+                            .font(.system(size: 30, weight: .bold, design: .rounded))
+                            .padding(.bottom, 20)
+                            .foregroundStyle(.white)
+                            .shadow(radius: 5)
                         VStack(alignment: .leading, spacing: 20) {
-                            Text(theme)
-                                .fixedSize(horizontal: false, vertical: true) // Allows text to wrap if an invidual word is too long to meet the padding requirement (ignores parent)
-                                .font(.system(size: 40, weight: .bold, design: .rounded))
-                                .padding(.bottom, 20)
-
                             
                             ForEach(tasks, id: \.self) { task in
                                 
                                 // Loop through each character in the string
                                 
-                                Text("-\(task)")
+                                Text("-\(goldNumbersFromString(string: task))")
                                     .fixedSize(horizontal: false, vertical: true)
                                     .font(.system(size: 25, weight: .bold, design: .rounded))
                             }
@@ -672,14 +732,12 @@ struct LandingPage15: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .foregroundStyle(.white)
                         .transition(.opacity)
+                    }
 
-                    )
                 )
-                
-              }
+            )
+            
         }
-        
-        print("Returning daysInfo: \(daysInfo)")
         
         return daysInfo
         
@@ -707,7 +765,7 @@ struct LandingPage15: View {
             .task {
                 do {
                     // This is where you call your async function
-                    response = try await gptCall()
+                    response = try await gptCall(ageGroup: ageGroup, goalType: goalType, goal: goal, difficulty: difficulty, days: days, pastExperience: pastExperience, coachingStyle: coachingStyle)
                     // JSON -> Dictionaries!
                     let decoder = JSONDecoder()
                     decoded_response = try decoder.decode(GoalResponse.self, from: response!)
@@ -723,15 +781,45 @@ struct LandingPage15: View {
         else {
             let dayArray = weekToDayInfo(data: decoded_response!)
             VStack {
-                dayArray[dayIndex]
-                Button("continue") {
-                    withAnimation {
-                        dayIndex += 1
+                if(dayIndex == -1) {
+                    VStack {
+                        HStack(spacing: 0) {
+                            Text("personalized plan")
+                            Text(" complete!")
+                                .foregroundStyle(Color(red: 167/255, green: 161/255, blue: 123/255))
+                        }
+                        .font(.system(size: 20, weight: .bold, design: .rounded))
+                        .padding(.bottom, 30)
+                        Text("week 1 theme:")
+                        Text(decoded_response!.week.theme)
+                    }
+                    .font(.system(size: 30, weight: .bold, design: .rounded))
+                    .foregroundStyle(.white)
+                    .shadow(radius: 5)
+                }
+                else {
+                    VStack(spacing: 30) {
+                        Text("Day \(dayIndex + 1)")
+                            .font(.system(size: 30, weight: .bold, design: .rounded))
+                            .foregroundStyle(.white)
+                            .shadow(radius: 5)
+                        dayArray[dayIndex]
                     }
                 }
-                .font(.system(size: 20, weight: .bold, design: .rounded))
-                .foregroundStyle(.white)
-                .padding(.top, 20) // Separate view than main structure
+                    Button("continue") {
+                        withAnimation {
+                            if(dayIndex == dayArray.count - 1) {
+                                print("Trying to go to LP17!")
+                                currentStep = .LP17
+                            }
+                            else {
+                                dayIndex += 1
+                            }
+                        }
+                    }
+                    .font(.system(size: 20, weight: .bold, design: .rounded))
+                    .foregroundStyle(.white)
+                    .padding(.top, 20) // Separate view than main structure
             }
         }
         
@@ -756,14 +844,15 @@ struct LandingPage15: View {
 //            }
 //        }
 //        #endif
-        
-        
-        
     }
-    
-    
-    
 }
+
+struct LandingPage17: View {
+    var body: some View {
+        Text("Test")
+    }
+}
+
     
 #Preview {
     LandingPageNav()

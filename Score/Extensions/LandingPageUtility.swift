@@ -7,12 +7,13 @@
 
 import SwiftUI
 
+
 /// Makes a question box view for each element in an array and recieve the response in a given state variable
 ///
 /// Parameter arrayName: Name of the array you'd like to iterate through and display as questions
 /// Parameter outputState: State variable that records the user selected answer out of the displayed questions
 /// Returns: View with the displayed questions
-func arrayToButtons(arrayName: Array<String>, outputState: Binding<String?>) -> some View {
+func arrayToButtons(arrayName: Array<String>, outputState: Binding<String>) -> some View {
     
     return (
     
@@ -36,17 +37,27 @@ func arrayToButtons(arrayName: Array<String>, outputState: Binding<String?>) -> 
 }
 
 /// Takes string and returns a view that makes the numbers golden
-func goldNumbersFromString(string: String) -> some View {
+/// ! Can't add shadow to individual characters because the NS shadow attribute from UIKit is unsendable and not marked as "safe"
+func goldNumbersFromString(string: String) -> AttributedString {
     // Alternative approach using AttributedString for more complex styling
+    
     func createAttributedString(from string: String) -> AttributedString {
+        
         var attributedString = AttributedString()
+                
+        var number_substring: Bool = false
         
         for character in string {
             var characterString = AttributedString(String(character))
             
-            if character.isNumber {
+            if (character == " ")  {
+                number_substring = false
+            }
+            else if (character.isNumber || (number_substring)) {
                 characterString.foregroundColor = Color(red: 167/255, green: 161/255, blue: 123/255)
-            } else {
+                number_substring = true
+            }
+            else {
                 characterString.foregroundColor = Color.white
             }
             
@@ -56,6 +67,6 @@ func goldNumbersFromString(string: String) -> some View {
         return attributedString
     }
     
-    return Text(createAttributedString(from: string))
-        .shadow(radius: 5)
+    return createAttributedString(from: string)
+
 }

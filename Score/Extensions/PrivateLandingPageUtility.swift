@@ -15,10 +15,7 @@ struct Post: Codable, Identifiable {
 }
 
 /// Returns the response in a Data object which is in JSON format
-func gptCall() async throws -> Data {
-    
-    print("Entered GPT call function")
-    
+func gptCall(ageGroup: String, goalType: String, goal: String, difficulty: Float16, days: Int16, pastExperience: String, coachingStyle: String) async throws -> Data {
     
     // Define a custom error we will throw at the end of this class
     enum GptCallError: Error {
@@ -28,22 +25,38 @@ func gptCall() async throws -> Data {
 
     func fetchPosts() async throws -> Data {
         
-        print("Prompting CGPT")
-        
         // Converts HTTP URL into Swift URL object format
         guard let url = URL(string: "https://call-gpt-988090023749.us-east4.run.app") else {
             throw URLError(.badURL)
         }
         
-        print("Prompted CGPT")
+        var request = URLRequest(url: url)
+        
+        print("Created request object")
+        
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let parameters = [
+            "ageGroup": ageGroup,
+            "goalType": goalType,
+            "goal": goal,
+            "difficulty": Double(difficulty),
+            "days": Int(days),
+            "pastExperience": pastExperience,
+            "coachingStyle": coachingStyle
+        ] as [String : Any]
+        
+        request.httpBody = try? JSONSerialization.data(withJSONObject: parameters)
+
+        print("Sending Request: \(request)")
     
         // Data is the raw binary response from the file and response is metadata is about the response
-        let (data, response) = try await URLSession.shared.data(from: url)
+        let (data, response) = try await URLSession.shared.data(for: request) // TODO: Make this dataTask instead of data and make it asynchronus
     
-        print("Data and response gathered: \(data);;; \(response)")
+        print("Data and response gathered: \(data); \(response)")
         
         // Turns the response (which is a json format string) into a swift object (which is a string dictionary)
-    
         
         // let jsonResponse = try JSONSerialization.jsonObject(with: data) as? String
 
